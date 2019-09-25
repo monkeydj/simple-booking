@@ -1,5 +1,7 @@
 # simple-booking
 
+_Note: mismatched number of value pairs will stop the program_
+
 ## Test
 
 Run following command after modules installation:
