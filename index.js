@@ -1,3 +1,7 @@
+const debug = require('debug');
+
+var checking = debug('checking');
+
 // export main functions
 module.exports = function checkRooms(rooms, bookings) {
     return checkAvailable(rooms, pairBookingDates(bookings));
@@ -40,11 +44,11 @@ function checkAvailable(rooms, bookedData) {
 
         let [bMin, bMax] = bookedData[i].map(Number);
 
-        process.stdout.write(`check booking from day ${bMin} to day ${bMax}...`);
+        checking(`check booking from day ${bMin} to day ${bMax}...`);
 
         // ! no idea if this check is appropriate
         if (isNaN(bMin) || isNaN(bMax) || bMin > bMax) {
-            console.warn('Invalid booking, no check!');
+            checking('Invalid booking, no check!');
             continue checkBooking;
         }
 
@@ -55,7 +59,7 @@ function checkAvailable(rooms, bookedData) {
 
             // check if booked daterange is invalid
             if (bMin <= max && bMax >= min) {
-                // stop checkign once run out of rooms
+                // stop checking once run out of rooms
                 if (rIdx == rooms - 1) return false;
                 else continue checkRooms;
             }
@@ -64,7 +68,7 @@ function checkAvailable(rooms, bookedData) {
             if (bMin < min || min == 0) trackings[rIdx].min = bMin;
             if (bMax > max || max == 0) trackings[rIdx].max = bMax;
 
-            process.stdout.write(`room ${rIdx + 1}\n`);
+            checking(`...to room ${rIdx + 1}\n`);
 
             continue checkBooking; // go back to outer loop
 
