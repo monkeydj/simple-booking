@@ -1,15 +1,14 @@
 # simple-booking
 
-## Input
+## Test
 
-Filename: bookings.txt
+Run following command after modules installation:
 
-First line consists of arrival dates; Second line consists of departures dates
+```bash
+$ npm test
+```
 
-_Note: mismatched number of value pairs will stop the program_
-
-
-## Execution
+## One-time execution
 
 Run following command
 
