@@ -19,7 +19,12 @@ module.exports = function checkRooms(rooms, [arrivals, departures] = [[], []]) {
 
 }
 
-
+/**
+ * check if current # of rooms can be booked with all requested date ranges
+ * @param {number} rooms # of available rooms
+ * @param {number[]} arrivals list of arrival dates
+ * @param {number[]} departures list of departure dates
+ */
 function checkAvailable(rooms, arrivals, departures) {
     // generate booking tracks for available rooms
     var roomTracks = [...Array(rooms)].map(() => ({ min: 0, max: 0 }));
