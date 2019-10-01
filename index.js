@@ -41,20 +41,20 @@ function checkAvailable(rooms, bookedData) {
 
     while (bIdx < bLen) {
 
-        let [bMin, bMax] = bookedData[bIdx], { min, max } = roomTracks[rIdx];
+        let [bArv, bDpt] = bookedData[bIdx], { min, max } = roomTracks[rIdx];
 
-        checking(`booking from day ${bMin} to day ${bMax}...`);
+        checking(`booking from day ${bArv} to day ${bDpt}...`);
 
-        if (!isNaN(bMin) && !isNaN(bMax) && bMin <= bMax) {
+        if (!isNaN(bArv) && !isNaN(bDpt) && bArv <= bDpt) {
 
-            if (bMin <= max && bMax >= min) { // invalid date range
+            if (bArv <= max && bDpt >= min) { // invalid date range
                 // try to stop once run out of rooms for booking in process
                 if (++rIdx == rooms) return false; else continue;
             }
             // else, extend the booking timerange for a room when it's ok
             checking(`...OK to room ${rIdx + 1}`);
-            if (bMin < min || min == 0) roomTracks[rIdx].min = bMin;
-            if (bMax > max || max == 0) roomTracks[rIdx].max = bMax;
+            if (bArv < min || min == 0) roomTracks[rIdx].min = bArv;
+            if (bDpt > max || max == 0) roomTracks[rIdx].max = bDpt;
 
         }
 
