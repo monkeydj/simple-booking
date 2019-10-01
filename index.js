@@ -23,9 +23,8 @@ function pairBookingDates([arrivals, departures] = [[], []]) {
     if (arrivals.length != departures.length) {
         throw new Error('Booking arrivals & departures are not matched!');
     }
-
-    return arrivals.map((value, i) => [value, departures[i]]);
-
+    // map into numeric pairs of arrival-departure
+    return arrivals.map((value, i) => [+value, +departures[i]]);
 }
 
 /**
@@ -37,33 +36,31 @@ function checkAvailable(rooms, bookedData) {
     if (!rooms) throw new Error('There\'s even no room!');
 
     // generate booking tracks for available rooms
-    var trackings = [...Array(rooms)].map(() => ({ min: 0, max: 0 }));
+    var roomTracks = [...Array(rooms)].map(() => ({ min: 0, max: 0 }));
     var bLen = bookedData.length, bIdx = 0, rIdx = 0;
 
-    do {
+    while (bIdx < bLen) {
 
-        let [bMin, bMax] = bookedData[bIdx].map(Number);
-        let { min, max } = trackings[rIdx];
+        let [bMin, bMax] = bookedData[bIdx], { min, max } = roomTracks[rIdx];
 
-        checking(`check booking from day ${bMin} to day ${bMax}...`);
+        checking(`booking from day ${bMin} to day ${bMax}...`);
 
-        if (isNaN(bMin) || isNaN(bMax) || bMin > bMax) {
-            checking('Invalid booking, no check!');
-            bIdx += 1; continue;
+        if (!isNaN(bMin) && !isNaN(bMax) && bMin <= bMax) {
+
+            if (bMin <= max && bMax >= min) { // invalid date range
+                // try to stop once run out of rooms for booking in process
+                if (++rIdx == rooms) return false; else continue;
+            }
+            // else, extend the booking timerange for a room when it's ok
+            checking(`...OK to room ${rIdx + 1}`);
+            if (bMin < min || min == 0) roomTracks[rIdx].min = bMin;
+            if (bMax > max || max == 0) roomTracks[rIdx].max = bMax;
+
         }
 
-        if (bMin <= max && bMax >= min) { // if booked date range is invalid
-            // stop checking once run out of rooms
-            if (++rIdx == rooms) return false; else continue;
-        }
-        // else, extend the booking timerange for a room when it's ok
-        checking(`...to room ${rIdx + 1}\n`);
-        if (bMin < min || min == 0) trackings[rIdx].min = bMin;
-        if (bMax > max || max == 0) trackings[rIdx].max = bMax;
+        bIdx += 1, rIdx = 0; // reset room index & proceed to next booking
 
-        rIdx = 0, bIdx += 1; // proceed to next booking data
-
-    } while (bIdx < bLen && rIdx < rooms);
+    }
 
     return true;
 
