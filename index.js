@@ -7,8 +7,8 @@ module.exports = function checkRooms(rooms, bookings) {
     return checkAvailable(rooms, pairBookingDates(bookings));
 }
 
-module.exports.checkAvailable = checkAvailable;
-module.exports.pairBookingDates = pairBookingDates;
+// module.exports.checkAvailable = checkAvailable;
+// module.exports.pairBookingDates = pairBookingDates;
 
 /**
  * preprocess data from required inputs
@@ -38,43 +38,32 @@ function checkAvailable(rooms, bookedData) {
 
     // generate booking tracks for available rooms
     var trackings = [...Array(rooms)].map(() => ({ min: 0, max: 0 }));
+    var bLen = bookedData.length, bIdx = 0, rIdx = 0;
 
-    checkBooking:
-    for (let i = 0, bLen = bookedData.length; i < bLen; i++) {
+    do {
 
-        let [bMin, bMax] = bookedData[i].map(Number);
+        let [bMin, bMax] = bookedData[bIdx].map(Number);
+        let { min, max } = trackings[rIdx];
 
         checking(`check booking from day ${bMin} to day ${bMax}...`);
 
-        // ! no idea if this check is appropriate
         if (isNaN(bMin) || isNaN(bMax) || bMin > bMax) {
             checking('Invalid booking, no check!');
-            continue checkBooking;
+            bIdx += 1; continue;
         }
 
-        checkRooms:
-        for (let rIdx = 0; rIdx < rooms; rIdx++) {
-
-            let { min, max } = trackings[rIdx];
-
-            // check if booked daterange is invalid
-            if (bMin <= max && bMax >= min) {
-                // stop checking once run out of rooms
-                if (rIdx == rooms - 1) return false;
-                else continue checkRooms;
-            }
-
-            // extend the booking timerange for a room when it's ok
-            if (bMin < min || min == 0) trackings[rIdx].min = bMin;
-            if (bMax > max || max == 0) trackings[rIdx].max = bMax;
-
-            checking(`...to room ${rIdx + 1}\n`);
-
-            continue checkBooking; // go back to outer loop
-
+        if (bMin <= max && bMax >= min) { // if booked date range is invalid
+            // stop checking once run out of rooms
+            if (++rIdx == rooms) return false; else continue;
         }
+        // else, extend the booking timerange for a room when it's ok
+        checking(`...to room ${rIdx + 1}\n`);
+        if (bMin < min || min == 0) trackings[rIdx].min = bMin;
+        if (bMax > max || max == 0) trackings[rIdx].max = bMax;
 
-    }
+        rIdx = 0, bIdx += 1; // proceed to next booking data
+
+    } while (bIdx < bLen && rIdx < rooms);
 
     return true;
 
