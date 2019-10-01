@@ -1,4 +1,4 @@
-var checkRooms = require('./index');
+const checkRooms = require('./index');
 
 describe('5 bookings with 2 ended in date 4, and 2 start from date 4', () => {
 

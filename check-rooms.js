@@ -1,5 +1,6 @@
-var checkRooms = require('./index');
-var bookings = require(`${__dirname}/bookings.sample`);
+const checkRooms = require('./index');
+const bookings = require(`${__dirname}/bookings.sample`);
+
 var rooms = Number(process.argv[2]) || 0;
 var result = checkRooms(rooms, bookings);
 
